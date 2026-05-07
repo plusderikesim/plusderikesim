@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plus Bilgisayarlı Deri Kesim | Hassas Deri Kesim Çözümleri</title>
+  <meta name="description" content="Plus Bilgisayarlı Deri Kesim; 2D kalıp sanallaştırma, minimum fire optimizasyonu ve bıçaklı hassas deri kesim çözümleri sunar." />
+  <meta name="keywords" content="deri kesim, bilgisayarlı deri kesim, bıçaklı kesim, 2D kalıp, minimum fire, İstanbul deri kesim" />
+  <meta property="og:title" content="Plus Bilgisayarlı Deri Kesim" />
+  <meta property="og:description" content="Minimum fire, yüksek hassasiyet ve temiz kesim kalitesiyle profesyonel deri kesim çözümleri." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://plusderikesim.org" />
+  <meta name="theme-color" content="#080808" />
+  <link rel="icon" href="plus-logo.png" />
+  <style>
+    :root{
+      --bg:#070707;
+      --panel:#0f0f0f;
+      --soft:#171717;
+      --text:#f6f6f6;
+      --muted:#8b8b8b;
+      --line:rgba(255,255,255,.10);
+      --red:#ef3340;
+      --red2:#991b1b;
+      --green:#25D366;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,Helvetica,sans-serif;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    .noise{position:fixed;inset:0;pointer-events:none;opacity:.08;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+    .bg-grid{position:absolute;inset:0;opacity:.34;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:72px 72px}
+    .glow-a,.glow-b{position:absolute;border-radius:999px;filter:blur(80px);opacity:.35}
+    .glow-a{right:-160px;top:-180px;width:560px;height:560px;background:var(--red2)}
+    .glow-b{left:-170px;bottom:-130px;width:460px;height:460px;background:#7c2d12}
+    .wrap{position:relative;z-index:2;width:min(1180px,calc(100% - 40px));margin:auto}
+    header{position:fixed;top:18px;left:0;right:0;z-index:50}
+    .nav{width:min(1180px,calc(100% - 30px));margin:auto;padding:14px 16px;border:1px solid var(--line);background:rgba(0,0,0,.62);backdrop-filter:blur(18px);border-radius:26px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 22px 60px rgba(0,0,0,.35)}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-card{height:50px;width:170px;background:white;border-radius:18px;padding:8px 18px;display:flex;align-items:center;justify-content:center;box-shadow:0 16px 40px rgba(239,51,64,.12)}
+    .brand-card img{max-width:100%;max-height:100%;object-fit:contain}
+    .menu{display:flex;gap:28px;color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:.22em}
+    .menu a:hover{color:var(--red)}
+    .mailtop{font-size:14px;color:#ccc}
+    .hamb{display:none;border:1px solid var(--line);background:transparent;color:white;border-radius:14px;width:46px;height:46px;font-size:24px}
+    .mobile-menu{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:90;padding:28px}
+    .mobile-menu.open{display:block}
+    .mobile-title{color:var(--red);font-weight:800;text-transform:uppercase;letter-spacing:.45em;margin-bottom:50px}
+    .mobile-menu a{display:block;font-size:34px;color:#666;margin:26px 0}
+    .close{position:absolute;right:28px;top:28px;width:46px;height:46px;border:1px solid var(--line);background:transparent;color:white;border-radius:14px;font-size:26px}
+    .hero{position:relative;min-height:100vh;padding:140px 0 90px;overflow:hidden}
+    .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+    .pill{display:inline-flex;gap:9px;align-items:center;border:1px solid rgba(239,51,64,.28);background:rgba(239,51,64,.10);color:#ffb5bb;border-radius:999px;padding:10px 16px;font-size:14px;margin-bottom:24px}
+    h1{font-size:clamp(48px,7vw,92px);line-height:.9;margin:0;text-transform:uppercase;letter-spacing:-.05em}
+    .gradient{display:block;background:linear-gradient(90deg,#fff,#ffb6bd,var(--red));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:clamp(17px,2vw,22px);line-height:1.7;color:#cfcfcf;max-width:670px;margin:30px 0 0}
+    .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:36px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:18px;padding:17px 24px;font-weight:900}
+    .btn-red{background:var(--red);color:white;box-shadow:0 24px 50px rgba(239,51,64,.20)}
+    .btn-red:hover{background:#d92733}
+    .btn-dark{border:1px solid var(--line);color:#ddd;background:rgba(255,255,255,.04)}
+    .visual{position:relative;height:560px}
+    .orbit{position:absolute;inset:20px;border:1px dashed rgba(239,51,64,.25);border-radius:999px;animation:spin 44s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .machine-card{position:absolute;inset:52px;border:1px solid var(--line);border-radius:48px;background:linear-gradient(145deg,#151515,#030303);overflow:hidden;box-shadow:0 28px 90px rgba(0,0,0,.55)}
+    .machine-card:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(239,51,64,.24),transparent 35%),radial-gradient(circle at 85% 75%,rgba(146,64,14,.26),transparent 40%)}
+    .leather-piece{position:absolute;border:1px solid rgba(255,150,150,.18);background:linear-gradient(135deg,rgba(127,29,29,.65),rgba(20,20,20,.95));border-radius:22px;box-shadow:0 14px 34px rgba(0,0,0,.45);animation:float 4s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0) rotate(var(--r))}50%{transform:translateY(-16px) rotate(var(--r))}}
+    .panel{position:absolute;right:30px;top:30px;width:245px;border:1px solid var(--line);background:rgba(0,0,0,.55);backdrop-filter:blur(16px);border-radius:26px;padding:18px}
+    .panel small{display:block;color:#ff9aa3;letter-spacing:.32em;text-transform:uppercase;margin-bottom:16px}
+    .bar{margin:14px 0}.bar-row{display:flex;justify-content:space-between;font-size:12px;color:#aaa;margin-bottom:7px}.track{height:8px;border-radius:9px;background:rgba(255,255,255,.10);overflow:hidden}.fill{height:100%;background:var(--red);border-radius:9px;animation:load 1.8s ease forwards;transform-origin:left}
+    @keyframes load{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    .visual-bottom{position:absolute;left:30px;right:30px;bottom:30px;border:1px solid var(--line);background:rgba(255,255,255,.08);border-radius:26px;padding:20px;backdrop-filter:blur(14px)}
+    .visual-bottom p{margin:0;color:#bbb}.visual-bottom strong{display:block;color:#ff9aa3;font-size:26px;margin-top:5px;text-transform:uppercase}
+    section{position:relative;padding:90px 0}
+    .eyebrow{color:var(--red);text-transform:uppercase;letter-spacing:.42em;font-weight:900;font-size:13px}
+    h2{font-size:clamp(38px,5.5vw,70px);line-height:1;margin:16px 0 0;text-transform:uppercase;letter-spacing:-.04em}
+    .section-text{max-width:900px;color:#aaa;font-size:18px;line-height:1.8;margin-top:25px}
+    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:42px}
+    .card{border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:32px;padding:28px;transition:.25s}
+    .card:hover{transform:translateY(-8px);border-color:rgba(239,51,64,.35)}
+    .icon{width:54px;height:54px;border-radius:18px;background:rgba(239,51,64,.13);color:#ff9aa3;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px}
+    .card h3{font-size:21px;margin:0;text-transform:uppercase}.card p{color:#9a9a9a;line-height:1.65}
+    .process{background:#0b0b0b;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .step{border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:32px;padding:30px}
+    .num{color:var(--red);font-size:42px;font-weight:950}
+    .demo{text-align:center;background:#0d0d0d}
+    .demo-phone{display:inline-block;margin-top:35px;color:var(--red);font-size:clamp(34px,5vw,66px);font-weight:950;letter-spacing:.12em}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:60px}
+    .contact-item{display:flex;gap:18px;color:#ddd;margin:30px 0;font-size:21px}
+    .contact-item small{display:block;color:#5f5f5f;letter-spacing:.32em;text-transform:uppercase;font-size:12px;margin-bottom:8px}
+    .socials{display:flex;gap:16px;margin-top:40px}.socials a{width:60px;height:60px;border:1px solid var(--line);display:grid;place-items:center;color:#777}.socials a:hover{color:white;border-color:rgba(239,51,64,.45)}
+    form{border-top:1px solid var(--line);padding-top:34px}
+    input,textarea{width:100%;background:transparent;border:1px solid var(--line);padding:18px 20px;color:white;font-size:16px;margin-bottom:18px;outline:none}
+    input:focus,textarea:focus{border-color:var(--red)}
+    textarea{min-height:160px;resize:vertical}
+    .submit{border:0;background:var(--red);color:white;padding:18px 32px;font-weight:950;text-transform:uppercase;letter-spacing:.22em;cursor:pointer}
+    .map{height:320px;border:1px solid var(--line);border-radius:32px;margin-top:36px;overflow:hidden;background:#111}
+    .map iframe{width:100%;height:100%;border:0;filter:grayscale(1) invert(.92) contrast(.85)}
+    .whatsapp-fixed{position:fixed;right:20px;bottom:20px;z-index:70;width:64px;height:64px;border-radius:999px;background:var(--green);display:grid;place-items:center;color:white;font-size:32px;box-shadow:0 18px 45px rgba(37,211,102,.32);animation:pulse 2.4s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+    footer{border-top:1px solid var(--line);padding:28px 0;color:#777;font-size:14px}
+    .foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .reveal{opacity:0;transform:translateY(24px);transition:.7s}.reveal.show{opacity:1;transform:none}
+    @media(max-width:950px){
+      .menu,.mailtop{display:none}.hamb{display:block}.brand-card{width:150px}
+      .hero-grid,.contact-grid{grid-template-columns:1fr}.visual{height:470px}.cards{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}
+      header{top:10px}.nav{border-radius:20px}
+    }
+    @media(max-width:560px){
+      .wrap{width:min(100% - 28px,1180px)}.hero{padding-top:120px}.cards{grid-template-columns:1fr}.visual{display:none}
+      h1{font-size:50px}.mobile-menu a{font-size:32px}.demo-phone{letter-spacing:.04em}
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <header>
+    <nav class="nav">
+      <a class="brand" href="#top">
+        <span class="brand-card"><img src="plus-logo.png" alt="Plus Bilgisayarlı Deri Kesim"></span>
+      </a>
+      <div class="menu">
+        <a href="#hakkimizda">Hakkımızda</a>
+        <a href="#hizmetler">Hizmetler</a>
+        <a href="#demo">Demo Kesim</a>
+        <a href="#iletisim">İletişim</a>
+        <a href="#mesaj">Mesaj Bırak</a>
+      </div>
+      <a class="mailtop" href="mailto:info@plusderikesim.org">info@plusderikesim.org</a>
+      <button class="hamb" onclick="openMenu()">☰</button>
+    </nav>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu">
+    <button class="close" onclick="closeMenu()">×</button>
+    <div class="mobile-title">Kurumsal</div>
+    <a onclick="closeMenu()" href="#hakkimizda">Hakkımızda</a>
+    <a onclick="closeMenu()" href="#hizmetler">Hizmetler</a>
+    <a onclick="closeMenu()" href="#iletisim">İletişim & Mesaj Bırak</a>
+    <a onclick="closeMenu()" href="#demo">Demo Kesim</a>
+    <a onclick="closeMenu()" href="https://wa.me/905412217502?text=Merhaba%20Plus%20Deri%20Kesim%2C%20bilgi%20almak%20istiyorum.">WhatsApp</a>
+  </div>
+
+  <main id="top">
+    <section class="hero">
+      <div class="bg-grid"></div><div class="glow-a"></div><div class="glow-b"></div>
+      <div class="wrap hero-grid">
+        <div class="reveal">
+          <div class="pill">✓ Kalite • Hassasiyet • Minimum Fire</div>
+          <h1>Bilgisayarlı <span class="gradient">Deri Kesim</span></h1>
+          <p class="lead">Kalıplarınızı 2D programlarımızda sanallaştırıyor, deri yüzeyine en verimli şekilde yerleştiriyor ve gelişmiş bıçaklı kesim makinelerimizle minimum fire, yüksek hassasiyet ve temiz kesim kalitesiyle üretime hazırlıyoruz.</p>
+          <div class="cta-row">
+            <a class="btn btn-red" href="https://wa.me/905412217502?text=Merhaba%20Plus%20Deri%20Kesim%2C%20bilgi%20almak%20istiyorum.">WhatsApp'tan Yaz →</a>
+            <a class="btn btn-dark" href="#hizmetler">Hizmetleri İncele</a>
+          </div>
+        </div>
+        <div class="visual reveal">
+          <div class="orbit"></div>
+          <div class="machine-card">
+            <span class="leather-piece" style="--r:8deg;width:120px;height:70px;left:55px;top:95px"></span>
+            <span class="leather-piece" style="--r:-18deg;width:150px;height:82px;left:210px;top:90px;animation-delay:.2s"></span>
+            <span class="leather-piece" style="--r:24deg;width:100px;height:115px;left:120px;top:220px;animation-delay:.4s"></span>
+            <span class="leather-piece" style="--r:-8deg;width:170px;height:80px;left:260px;top:235px;animation-delay:.6s"></span>
+            <span class="leather-piece" style="--r:14deg;width:130px;height:95px;left:80px;top:355px;animation-delay:.8s"></span>
+            <span class="leather-piece" style="--r:-25deg;width:105px;height:130px;left:320px;top:355px;animation-delay:1s"></span>
+            <div class="panel">
+              <small>Kesim Paneli</small>
+              <div class="bar"><div class="bar-row"><span>Hassasiyet</span><span>96</span></div><div class="track"><div class="fill" style="width:96%"></div></div></div>
+              <div class="bar"><div class="bar-row"><span>Verim</span><span>91</span></div><div class="track"><div class="fill" style="width:91%"></div></div></div>
+              <div class="bar"><div class="bar-row"><span>Fire Kontrol</span><span>94</span></div><div class="track"><div class="fill" style="width:94%"></div></div></div>
+            </div>
+            <div class="visual-bottom"><p>Dijital yerleşim kontrolü</p><strong>Minimum fire hedefi</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hakkimizda">
+      <div class="wrap reveal">
+        <div class="eyebrow">Kurumsal</div>
+        <h2>Hakkımızda</h2>
+        <p class="section-text">Deri kesim süreçlerinde kalite, hassasiyet ve minimum fire oranı en büyük önceliğimizdir. Tarafımıza iletilen kalıplar, uzman ekibimiz tarafından 2D kesim programlarımızda dijital ortama aktarılıp sanallaştırılarak detaylı şekilde kontrol edilmektedir. Bu süreç sayesinde hem ölçü doğruluğu sağlanmakta hem de deri kullanım verimliliği maksimum seviyeye çıkarılmaktadır.</p>
+        <p class="section-text">Gelişmiş bıçaklı kesim makinelerimiz ile yapılan üretimlerde yüksek hassasiyet, temiz kesim kalitesi ve seri üretime uygun stabil sonuçlar elde edilmektedir. Gerçek deri kesimlerinde oluşabilecek hata paylarını minimize ederek müşterilerimize standart ve güvenilir üretim sunuyoruz.</p>
+      </div>
+    </section>
+
+    <section id="hizmetler">
+      <div class="wrap reveal">
+        <div class="eyebrow">Hizmetler</div>
+        <h2>Kesim Süreci</h2>
+        <div class="cards">
+          <div class="card"><div class="icon">⌗</div><h3>2D Kalıp Sanallaştırma</h3><p>Kalıplar dijital ortama aktarılır, ölçü ve yerleşim kontrolleri üretim öncesi yapılır.</p></div>
+          <div class="card"><div class="icon">▧</div><h3>Minimum Fire Optimizasyonu</h3><p>Deri yapısı, kalınlık ve ürün grubuna göre en verimli yerleşim planı hazırlanır.</p></div>
+          <div class="card"><div class="icon">✂</div><h3>Bıçaklı Hassas Kesim</h3><p>Gelişmiş bıçaklı kesim makineleriyle temiz, hassas ve stabil sonuçlar elde edilir.</p></div>
+          <div class="card"><div class="icon">✓</div><h3>Güvenilir Üretim</h3><p>Küçük özel üretimlerden yüksek adetli seri işlere kadar aynı titizlikle çalışılır.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process">
+      <div class="wrap steps reveal">
+        <div class="step"><div class="num">01</div><h3>Kalıp Alımı</h3><p>Kalıplarınız dijital kesim programına aktarılır ve kontrol edilir.</p></div>
+        <div class="step"><div class="num">02</div><h3>Yerleşim</h3><p>Deri yüzeyinde minimum fire hedefiyle en verimli plan oluşturulur.</p></div>
+        <div class="step"><div class="num">03</div><h3>Hassas Kesim</h3><p>Bıçaklı kesim makinesiyle temiz, düzgün ve tekrarlanabilir üretim sağlanır.</p></div>
+      </div>
+    </section>
+
+    <section id="demo" class="demo">
+      <div class="wrap reveal">
+        <div class="eyebrow">Demo & Bilgi</div>
+        <h2>Kesim işleriniz için<br>şimdi iletişime geçin</h2>
+        <a class="demo-phone" href="tel:905412217502">+90 541 221 75 02</a>
+      </div>
+    </section>
+
+    <section id="iletisim">
+      <div class="wrap reveal">
+        <div class="eyebrow" style="text-align:center">Bize Ulaşın</div>
+        <h2 style="text-align:center">İletişim</h2>
+        <div class="contact-grid">
+          <div>
+            <h3 style="font-size:42px;text-transform:uppercase;margin:0 0 34px">Plus Deri Kesim</h3>
+            <a class="contact-item" href="tel:905412217502"><span>☎</span><span><small>Telefon</small>+90 541 221 75 02</span></a>
+            <a class="contact-item" href="https://wa.me/905412217502?text=Merhaba%20Plus%20Deri%20Kesim%2C%20bilgi%20almak%20istiyorum."><span>💬</span><span><small>WhatsApp</small>Tıkla & yaz</span></a>
+            <a class="contact-item" href="mailto:info@plusderikesim.org"><span>✉</span><span><small>E-Posta</small>info@plusderikesim.org</span></a>
+            <div class="contact-item"><span>📍</span><span><small>Adres</small>İkitelli OSB Mah., Aymakoop Sanayi Sitesi, C3 Blok, İstanbul</span></div>
+            <div class="socials">
+              <a href="#" aria-label="Instagram">ig</a>
+              <a href="#" aria-label="YouTube">▶</a>
+              <a href="#" aria-label="LinkedIn">in</a>
+            </div>
+            <div class="map">
+              <iframe src="https://www.google.com/maps?q=%C4%B0kitelli%20OSB%20Aymakoop%20Sanayi%20Sitesi%20%C4%B0stanbul&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
+          <form id="mesaj" onsubmit="sendMail(event)">
+            <h3 style="font-size:42px;text-transform:uppercase;margin:0 0 28px">Mesaj Bırakın</h3>
+            <input id="name" placeholder="Adınız" />
+            <input id="company" placeholder="Firma Adı" />
+            <input id="email" placeholder="email@firma.com" />
+            <input id="phone" placeholder="+90 5xx xxx xx xx" />
+            <textarea id="message" placeholder="Mesajınızı buraya yazın..."></textarea>
+            <button class="submit" type="submit">Gönder</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a class="whatsapp-fixed" href="https://wa.me/905412217502?text=Merhaba%20Plus%20Deri%20Kesim%2C%20bilgi%20almak%20istiyorum." aria-label="WhatsApp">💬</a>
+
+  <footer>
+    <div class="wrap foot">
+      <span>© <span id="year"></span> Plus Bilgisayarlı Deri Kesim. Tüm hakları saklıdır.</span>
+      <span>plusderikesim.org</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    function openMenu(){document.getElementById("mobileMenu").classList.add("open")}
+    function closeMenu(){document.getElementById("mobileMenu").classList.remove("open")}
+    function sendMail(e){
+      e.preventDefault();
+      const val = id => document.getElementById(id).value || "";
+      const subject = encodeURIComponent("Plus Deri Kesim - Web Sitesi Mesajı");
+      const body = encodeURIComponent(
+        "Ad Soyad: " + val("name") + "\\n" +
+        "Firma: " + val("company") + "\\n" +
+        "E-posta: " + val("email") + "\\n" +
+        "Telefon: " + val("phone") + "\\n\\n" +
+        "Mesaj:\\n" + val("message")
+      );
+      window.location.href = "mailto:info@plusderikesim.org?subject=" + subject + "&body=" + body;
+    }
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add("show") })
+    },{threshold:.12});
+    document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+  </script>
+</body>
+</html>
